@@ -1,19 +1,58 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-    
-    <!-- PLUGIN-LEVEL AAOS DISTRACTION OPTIMIZATION -->
+
+    <!-- Your existing AAOS entries -->
     <uses-permission android:name="android.car.permission.CAR_DRIVING_STATE" />
     <uses-permission android:name="android.car.permission.CAR_UX_RESTRICTIONS_CONFIGURATION" />
-    
-    <!-- Automotive feature declarations for plugin -->
-    <uses-feature
-        android:name="android.hardware.type.automotive"
-        android:required="false" />
-    
+    <uses-feature android:name="android.hardware.type.automotive" android:required="false" />
+
+    <!-- Needed for USB host -->
+    <uses-feature android:name="android.hardware.usb.host" android:required="true"/>
+
+    <!-- Optional but recommended if you stream in a Service -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+
     <application>
-        <!-- PLUGIN: MARK AS DISTRACTION OPTIMIZED -->
+        <!-- Keep your DO flag -->
         <meta-data
             android:name="com.android.automotive.application.DISTRACTION_OPTIMIZED"
             android:value="true" />
+
+        <!-- Tiny trampoline activity launched when the Carlinkit is attached -->
+        <activity
+            android:name=".UsbEntryActivity"
+            android:exported="true"
+            android:launchMode="singleTask"
+            android:taskAffinity=""
+            android:excludeFromRecents="true"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen">
+
+            <intent-filter>
+                <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.hardware.usb.device_filter"
+                android:resource="@xml/device_filter" />
+        </activity>
+
+        <!-- Receives result of UsbManager.requestPermission() -->
+        <receiver
+            android:name=".UsbPermissionReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.werksmangm.cpaaplayer.USB_PERMISSION" />
+            </intent-filter>
+        </receiver>
+
+        <!-- (Optional) Close cleanly on detach -->
+        <receiver
+            android:name=".UsbDetachReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.hardware.usb.action.USB_DEVICE_DETACHED" />
+            </intent-filter>
+        </receiver>
+
     </application>
-    
 </manifest>
