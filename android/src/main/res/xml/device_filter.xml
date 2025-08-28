@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Carlinkit dongle -->
+    <usb-device vendor-id="0x1314" product-id="0x1521" />
+    <!-- If your dongle sometimes enumerates with alternates, add more lines here -->
+    <!-- <usb-device vendor-id="0x1314" product-id="0x1520" /> -->
+</resources>
